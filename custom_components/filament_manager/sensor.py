@@ -89,7 +89,7 @@ class RemainingWeightSensor(FilamentSpoolEntity, SensorEntity):
                 else None
             ),
             "diameter": filament_type.diameter if filament_type else None,
-            "spool_weight": filament_type.spool_weight if filament_type else None,
+            "spool_weight": self.coordinator.spool_weight_for(spool),
             "initial_weight": spool.initial_weight,
             "location": spool.location,
             "purchase_date": spool.purchase_date,

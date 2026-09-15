@@ -149,6 +149,18 @@ class FilamentCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         return label
 
     @callback
+    def spool_weight_for(self, spool: Spool) -> float:
+        """Return what this roll's empty spool weighs.
+
+        A refill has no spool of its own and ends up on one the user already
+        owned, so the per-roll value wins over the type's.
+        """
+        if spool.spool_weight is not None:
+            return spool.spool_weight
+        filament_type = self.type_of(spool)
+        return filament_type.spool_weight if filament_type else 0.0
+
+    @callback
     def threshold_for(self, spool: Spool) -> float:
         """Return the low stock threshold that applies to a spool."""
         if spool.low_stock_threshold is not None:
@@ -174,7 +186,7 @@ class FilamentCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             "color_name": filament_type.color_name if filament_type else None,
             "color_hex": filament_type.color_hex if filament_type else None,
             "diameter": filament_type.diameter if filament_type else None,
-            "spool_weight": filament_type.spool_weight if filament_type else None,
+            "spool_weight": self.spool_weight_for(spool),
             "remaining_weight": spool.remaining_weight,
             "initial_weight": spool.initial_weight,
             "remaining_percent": spool.remaining_percent,
@@ -365,11 +377,10 @@ class FilamentCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         if spool is None:
             raise HomeAssistantError(f"Unknown spool: {spool_id}")
         if gross_weight is not None:
-            filament_type = self.type_of(spool)
-            empty = filament_type.spool_weight if filament_type else 0.0
+            empty = self.spool_weight_for(spool)
             if not empty:
                 _LOGGER.warning(
-                    "Filament type of %s has no spool_weight, so the gross "
+                    "No empty spool weight is known for %s, so the gross "
                     "weight is used as-is",
                     self.spool_name(spool),
                 )

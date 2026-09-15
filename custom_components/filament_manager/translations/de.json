@@ -83,11 +83,13 @@
           "price": "Preis",
           "purchase_date": "Kaufdatum",
           "low_stock_threshold": "Schwelle für niedrigen Bestand",
-          "note": "Notiz"
+          "note": "Notiz",
+          "spool_weight": "Leergewicht der Spule"
         },
         "data_description": {
           "remaining_weight": "Netto-Filament ohne die leere Spule.",
-          "low_stock_threshold": "Leer lassen für die globale Schwelle."
+          "low_stock_threshold": "Leer lassen für die globale Schwelle.",
+          "spool_weight": "Nur für ein Refill auf einer eigenen Spule; leer lassen für den Wert des Filamenttyps."
         }
       },
       "assign_spool": {
@@ -379,6 +381,10 @@
         "low_stock_threshold": {
           "name": "Schwelle für niedrigen Bestand",
           "description": "Überschreibt die globale Schwelle."
+        },
+        "spool_weight": {
+          "name": "Leergewicht der Spule",
+          "description": "Überschreibt den Wert des Typs, für ein Refill auf einer eigenen Spule."
         }
       }
     },

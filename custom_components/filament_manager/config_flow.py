@@ -400,6 +400,11 @@ class FilamentManagerOptionsFlow(OptionsFlow):
                     if user_input.get("low_stock_threshold") not in (None, "")
                     else None
                 ),
+                spool_weight=(
+                    float(user_input["spool_weight"])
+                    if user_input.get("spool_weight") not in (None, "")
+                    else None
+                ),
             )
             return await self.async_step_init()
 
@@ -424,6 +429,10 @@ class FilamentManagerOptionsFlow(OptionsFlow):
                 "low_stock_threshold",
                 description={"suggested_value": spool.low_stock_threshold},
             ): _number(0, 2000, 10, "g"),
+            vol.Optional(
+                "spool_weight",
+                description={"suggested_value": spool.spool_weight},
+            ): _number(0, 2000, 1, "g"),
             vol.Optional(
                 "note", description={"suggested_value": spool.note}
             ): TextSelector(TextSelectorConfig(multiline=True)),

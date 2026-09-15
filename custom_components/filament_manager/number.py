@@ -59,8 +59,7 @@ class GrossWeightNumber(FilamentSpoolEntity, NumberEntity):
         spool = self.spool
         if spool is None:
             return None
-        filament_type = self.filament_type
-        empty = filament_type.spool_weight if filament_type else 0.0
+        empty = self.coordinator.spool_weight_for(spool)
         return round(spool.remaining_weight + empty, 1)
 
     async def async_set_native_value(self, value: float) -> None:

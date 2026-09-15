@@ -93,6 +93,10 @@ The empty spool weight is the field worth measuring yourself. It is what turns
 a kitchen scale reading into a remaining filament figure, and the bundled
 values are the manufacturers' published ones, not measurements.
 
+A refill has no spool of its own and ends up on one you already owned, so a
+roll can carry its own empty spool weight (*Manage spools → Edit*) which wins
+over the type's.
+
 ### The filament database
 
 Two layers are merged at startup and **the user wins**:

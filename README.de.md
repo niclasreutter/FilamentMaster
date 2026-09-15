@@ -94,6 +94,10 @@ Das Leergewicht der Spule ist das Feld, das sich zu messen lohnt. Erst damit
 wird aus einem Waagenwert ein Restfilament-Wert; die mitgelieferten Werte sind
 Herstellerangaben, keine Messungen.
 
+Ein Refill hat keine eigene Spule und landet auf einer, die du schon hattest —
+deshalb kann eine Rolle ein eigenes Leergewicht tragen (*Rollen verwalten →
+Bearbeiten*), das den Wert des Typs schlägt.
+
 ### Die Filamentdatenbank
 
 Zwei Ebenen werden beim Start gemergt, **der User gewinnt**:

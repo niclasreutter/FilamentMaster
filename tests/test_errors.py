@@ -96,7 +96,7 @@ async def test_a_type_without_a_spool_weight_uses_the_gross_value(
 
     coordinator.async_correct_weight(spool.id, gross_weight=640)
     assert coordinator.store.get_spool(spool.id).remaining_weight == 640
-    assert "no spool_weight" in caplog.text
+    assert "No empty spool weight is known" in caplog.text
 
 
 async def test_services_need_a_loaded_entry(hass: HomeAssistant) -> None:

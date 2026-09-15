@@ -83,11 +83,13 @@
           "price": "Price",
           "purchase_date": "Purchase date",
           "low_stock_threshold": "Low stock threshold",
-          "note": "Note"
+          "note": "Note",
+          "spool_weight": "Empty spool weight"
         },
         "data_description": {
           "remaining_weight": "Net filament without the empty spool.",
-          "low_stock_threshold": "Leave empty to use the global threshold."
+          "low_stock_threshold": "Leave empty to use the global threshold.",
+          "spool_weight": "Only for a refill on a spool you already owned; leave empty to use the filament type's value."
         }
       },
       "assign_spool": {
@@ -379,6 +381,10 @@
         "low_stock_threshold": {
           "name": "Low stock threshold",
           "description": "Overrides the global threshold."
+        },
+        "spool_weight": {
+          "name": "Empty spool weight",
+          "description": "Overrides the type's value, for a refill on a spool you already owned."
         }
       }
     },

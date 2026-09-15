@@ -85,6 +85,7 @@ UPDATE_SPOOL_SCHEMA = vol.Schema(
         vol.Optional("purchase_date"): cv.string,
         vol.Optional("note"): cv.string,
         vol.Optional("low_stock_threshold"): vol.Coerce(float),
+        vol.Optional("spool_weight"): vol.Coerce(float),
         vol.Optional(ATTR_TYPE_ID): cv.string,
     }
 )

@@ -216,3 +216,42 @@ async def test_entities_survive_a_restart(
         hass.states.get("sensor.filament_manager_slot_1").attributes["spool_id"]
         == spool.id
     )
+
+
+async def test_a_refill_uses_its_own_empty_spool_weight(
+    hass: HomeAssistant, setup_integration: MockConfigEntry
+) -> None:
+    """A refill has no spool; it goes on one the user already owned."""
+    coordinator = setup_integration.runtime_data
+    # The bundled refill type declares a spool weight of zero.
+    spool = coordinator.async_add_spool("bambulab_pla_basic_refill")
+    await hass.async_block_till_done()
+    entity_id = spool_entity(hass, spool.id, "gross_weight")
+    assert hass.states.get(entity_id).state == "1000.0"
+
+    # The user's own reusable spool weighs 190 g.
+    coordinator.store.update_spool(spool.id, spool_weight=190)
+    await hass.async_block_till_done()
+    assert hass.states.get(entity_id).state == "1190.0"
+
+    await hass.services.async_call(
+        "number",
+        "set_value",
+        {"entity_id": entity_id, "value": 690},
+        blocking=True,
+    )
+    assert coordinator.store.get_spool(spool.id).remaining_weight == 500
+
+
+async def test_the_per_roll_weight_wins_over_the_type(
+    hass: HomeAssistant, setup_integration: MockConfigEntry
+) -> None:
+    coordinator = setup_integration.runtime_data
+    spool = coordinator.async_add_spool("bambulab_pla_basic")
+    assert coordinator.spool_weight_for(spool) == 212
+
+    coordinator.store.update_spool(spool.id, spool_weight=150)
+    assert coordinator.spool_weight_for(spool) == 150
+
+    coordinator.store.update_spool(spool.id, spool_weight=None)
+    assert coordinator.spool_weight_for(spool) == 212

@@ -173,6 +173,9 @@ class Spool(_FromDictMixin):
     assignment_time: str | None = None
     total_consumed: float = 0.0
     low_stock_threshold: float | None = None
+    # Overrides the type's empty spool weight, for a refill wound onto a
+    # spool you already owned.
+    spool_weight: float | None = None
     first_used: str | None = None
     last_used: str | None = None
     note: str | None = None
@@ -187,6 +190,7 @@ class Spool(_FromDictMixin):
         self.price = _coerce_float(self.price)
         self.total_consumed = max(0.0, _coerce_float(self.total_consumed) or 0.0)
         self.low_stock_threshold = _coerce_float(self.low_stock_threshold)
+        self.spool_weight = _coerce_float(self.spool_weight)
         self.rfid_uids = [
             normalized
             for normalized in (normalize_uid(uid) for uid in (self.rfid_uids or []))
