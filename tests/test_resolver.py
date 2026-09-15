@@ -379,3 +379,59 @@ async def test_an_unavailable_tray_sensor_keeps_the_assignment(
     hass.states.async_set(TRAY_1, "unavailable", {})
     await hass.async_block_till_done()
     assert coordinator.store.slots[1].spool_id == spool.id
+
+
+async def test_an_all_zero_tag_uid_falls_through_to_the_heuristic(
+    hass: HomeAssistant, user_types, setup_integration: MockConfigEntry
+) -> None:
+    """Bambu reports 0000000000000000 for filament that has no tag at all.
+
+    Treating that as an unknown tag would ask about every third-party roll
+    and never run the colour match.
+    """
+    coordinator = setup_integration.runtime_data
+    spool = coordinator.async_add_spool("black_pla")
+    unknown = async_capture_events(hass, EVENT_UNKNOWN_TAG)
+
+    hass.states.async_set(
+        TRAY_1,
+        "PLA",
+        {
+            "tag_uid": "0000000000000000",
+            "tray_uuid": "00000000000000000000000000000000",
+            "type": "PLA",
+            "color": "#111111FF",
+            "remain": -1,
+            "empty": False,
+        },
+    )
+    await hass.async_block_till_done()
+
+    assert unknown == []
+    assert coordinator.store.slots[1].spool_id == spool.id
+    assert coordinator.store.slots[1].source == SOURCE_HEURISTIC
+
+
+async def test_tag_uids_match_whatever_separators_they_arrive_with(
+    hass: HomeAssistant, user_types, setup_integration: MockConfigEntry
+) -> None:
+    coordinator = setup_integration.runtime_data
+    spool = coordinator.async_add_spool("black_pla")
+    coordinator.store.learn_rfid(spool.id, "04:a1:b2:c3")
+
+    assert coordinator.store.get_spool(spool.id).rfid_uids == ["04A1B2C3"]
+    assert coordinator.store.spool_by_rfid("04-A1-B2-C3").id == spool.id
+
+    set_tray(hass, TRAY_2, tag_uid="04A1B2C3", type="PLA")
+    await hass.async_block_till_done()
+    assert coordinator.store.slots[2].spool_id == spool.id
+
+
+async def test_an_all_zero_uid_is_never_learned(
+    hass: HomeAssistant, user_types, setup_integration: MockConfigEntry
+) -> None:
+    coordinator = setup_integration.runtime_data
+    spool = coordinator.async_add_spool("black_pla")
+
+    assert coordinator.store.learn_rfid(spool.id, "0000000000000000") is None
+    assert coordinator.store.get_spool(spool.id).rfid_uids == []

@@ -105,13 +105,27 @@ async def test_services_need_a_loaded_entry(hass: HomeAssistant) -> None:
 
 
 def test_active_tray_parsing() -> None:
-    """``tray_now`` counts from zero, a user facing sensor does not."""
-    assert _parse_slot("2", {}) == 2
+    """The Bambu active-tray sensor names the filament, not the slot."""
+    # ha-bambulab: the state is the filament's name, the position sits in
+    # ams_index/tray_index, both counting from zero.
+    assert _parse_slot("Bambu PLA Basic", {"ams_index": 0, "tray_index": 1}) == 2
+    assert _parse_slot("Generic PETG", {"ams_index": 1, "tray_index": 0}) == 5
+
+    # A tray sensor carries its own slot number, already counting from one.
+    assert _parse_slot("PLA", {"slot": 3}) == 3
+
+    # The raw MQTT field counts from zero.
     assert _parse_slot("", {"tray_now": "0"}) == 1
     assert _parse_slot("", {"tray_now": "3"}) == 4
-    assert _parse_slot("Slot 2", {}) == 2
+
+    # A plain number is a slot; a name that happens to contain one is not.
+    assert _parse_slot("2", {}) == 2
+    assert _parse_slot("PLA Basic 2", {}) is None
+    assert _parse_slot("none", {}) is None
+    assert _parse_slot("", {}) is None
+
     # 254 is the external spool, 255 means nothing is loaded.
+    assert _parse_slot("x", {"tray_index": 254}) is None
+    assert _parse_slot("x", {"ams_index": 255, "tray_index": 255}) is None
     assert _parse_slot("", {"tray_now": "254"}) is None
     assert _parse_slot("255", {}) is None
-    assert _parse_slot("", {}) is None
-    assert _parse_slot("none", {}) is None

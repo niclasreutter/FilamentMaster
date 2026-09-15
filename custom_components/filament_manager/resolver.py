@@ -41,9 +41,10 @@ from .const import (
     TAG_KIND_SLOT,
     TAG_KIND_SPOOL,
     TAG_PAIR_TIMEOUT,
+    TRAYS_PER_AMS,
 )
 from .coordinator import FilamentCoordinator
-from .models import Spool
+from .models import Spool, normalize_uid
 from .notifications import (
     VERB_ASSIGN,
     VERB_IGNORE,
@@ -60,7 +61,6 @@ BAMBU_PLATFORMS = ("bambu_lab", "bambulab")
 # ``ams_1_tray_2`` or plain ``tray_3``; the AMS index turns into a global
 # slot number so that a second AMS continues at 5.
 _SLOT_PATTERN = re.compile(r"(?:ams[_\s]*(\d+)[_\s]*)?tray[_\s]*(\d+)", re.IGNORECASE)
-_TRAYS_PER_AMS = 4
 
 # The same fact is called different things across integrations and versions,
 # so every reading tries a list of candidates.
@@ -146,7 +146,7 @@ def read_tray(attributes: dict[str, Any], state: str | None = None) -> TrayReadi
     number shown in Bambu Studio — mapping consistently onto the UID is what
     keeps the two from being confused.
     """
-    uid = _pick(attributes, _UID_KEYS)
+    uid = normalize_uid(_pick(attributes, _UID_KEYS))
     material = canonical_material(_pick(attributes, _MATERIAL_KEYS))
     if material is None and state:
         material = canonical_material(state)
@@ -171,7 +171,7 @@ def read_tray(attributes: dict[str, Any], state: str | None = None) -> TrayReadi
         remaining_value = None
 
     return TrayReading(
-        uid=str(uid).strip().upper() if uid else None,
+        uid=uid,
         material=material,
         color=color,
         diameter=diameter_value,
@@ -194,7 +194,7 @@ def async_discover_tray_entities(hass: HomeAssistant) -> dict[int, str]:
             continue
         ams_index = int(match.group(1) or 1)
         tray_index = int(match.group(2))
-        slot = (ams_index - 1) * _TRAYS_PER_AMS + tray_index
+        slot = (ams_index - 1) * TRAYS_PER_AMS + tray_index
         found.setdefault(slot, entry.entity_id)
     return dict(sorted(found.items()))
 

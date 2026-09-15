@@ -25,7 +25,9 @@ from .const import (
     CONF_PRINT_WEIGHT_ENTITY,
     CONF_SPLIT_STRATEGY,
     DEFAULT_SPLIT_STRATEGY,
+    EXTERNAL_SPOOL_INDEX,
     SPLIT_LAST_SLOT,
+    TRAYS_PER_AMS,
 )
 from .coordinator import FilamentCoordinator
 
@@ -298,32 +300,46 @@ class ConsumptionTracker:
         return occupied[0] if len(occupied) == 1 else None
 
 
-def _parse_slot(raw: str, attributes: dict[str, Any]) -> int | None:
-    """Return the slot number from an active-tray sensor.
+def _as_index(value: Any) -> int | None:
+    """Return ``value`` as a non-negative integer, or ``None``."""
+    if value is None or isinstance(value, bool):
+        return None
+    try:
+        number = int(str(value).strip())
+    except (TypeError, ValueError):
+        return None
+    return number if number >= 0 else None
 
-    ``tray_now`` is the raw MQTT field and counts from zero, while a sensor
-    that shows "1" to a user means the slot labelled 1 on the machine — so
-    only the raw field gets shifted.
+
+def _parse_slot(raw: str, attributes: dict[str, Any]) -> int | None:
+    """Return the slot number an active-tray sensor is pointing at.
+
+    The Bambu integration's active-tray sensor reports the *filament's name*
+    as its state and puts the position in ``ams_index``/``tray_index``, both
+    counting from zero. Reading digits out of that state would happily turn
+    "PLA Basic 2" into slot 2, so a non-numeric state yields nothing.
     """
-    text = str(raw).strip()
-    zero_based = False
+    tray = _as_index(attributes.get("tray_index"))
+    if tray is not None:
+        ams = _as_index(attributes.get("ams_index")) or 0
+        if tray >= EXTERNAL_SPOOL_INDEX or ams >= EXTERNAL_SPOOL_INDEX:
+            # The external spool, or nothing loaded at all.
+            return None
+        return ams * TRAYS_PER_AMS + tray + 1
+
+    # A tray sensor carries its own slot number, already counting from one.
+    slot = _as_index(attributes.get("slot"))
+    if slot is not None:
+        return slot if 1 <= slot < EXTERNAL_SPOOL_INDEX else None
+
+    # ``tray_now`` is the raw MQTT field and counts from zero.
     for key in ("tray_now", "ams_tray_now"):
-        if key in attributes and attributes[key] not in (None, ""):
-            text = str(attributes[key]).strip()
-            zero_based = True
-            break
-    else:
-        for key in ("slot", "tray", "active_tray"):
-            if key in attributes and attributes[key] not in (None, ""):
-                text = str(attributes[key]).strip()
-                break
-    if not text:
-        return None
-    digits = "".join(char for char in text if char.isdigit())
-    if not digits:
-        return None
-    value = int(digits)
-    # 254 is the external spool, 255 means nothing is loaded.
-    if value >= 254:
-        return None
-    return value + 1 if zero_based else value or None
+        value = _as_index(attributes.get(key))
+        if value is not None:
+            return None if value >= EXTERNAL_SPOOL_INDEX else value + 1
+
+    text = str(raw).strip()
+    if text.isdigit():
+        value = int(text)
+        return value if 1 <= value < EXTERNAL_SPOOL_INDEX else None
+    return None

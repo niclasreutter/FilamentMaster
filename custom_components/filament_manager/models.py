@@ -37,6 +37,23 @@ def slugify_id(value: str) -> str:
     return slug.strip("_") or new_id()
 
 
+def normalize_uid(value: Any) -> str | None:
+    """Return a usable RFID tag UID, or ``None``.
+
+    Printers report an all-zero UID for filament that carries no tag at all.
+    That is not a tag waiting to be learned — it is the signal to fall back
+    to matching on material and colour, so it must not look like one.
+    Separators vary between readers and are dropped, so a UID pasted as
+    ``04:A1:B2`` matches the same roll as ``04A1B2``.
+    """
+    if value is None:
+        return None
+    uid = "".join(char for char in str(value).strip().upper() if char not in ":-. _")
+    if not uid or set(uid) <= {"0"} or set(uid) <= {"F"}:
+        return None
+    return uid
+
+
 def _coerce_float(value: Any) -> float | None:
     """Return ``value`` as float, or ``None`` when it is not a number."""
     if value is None or value == "":
@@ -171,9 +188,9 @@ class Spool(_FromDictMixin):
         self.total_consumed = max(0.0, _coerce_float(self.total_consumed) or 0.0)
         self.low_stock_threshold = _coerce_float(self.low_stock_threshold)
         self.rfid_uids = [
-            str(uid).strip().upper()
-            for uid in (self.rfid_uids or [])
-            if str(uid).strip()
+            normalized
+            for normalized in (normalize_uid(uid) for uid in (self.rfid_uids or []))
+            if normalized
         ]
         self.archived = bool(self.archived)
 

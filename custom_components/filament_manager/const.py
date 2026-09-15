@@ -46,6 +46,10 @@ DEFAULT_SPLIT_STRATEGY: Final = SPLIT_PROPORTIONAL
 
 MIN_SLOT_COUNT: Final = 1
 MAX_SLOT_COUNT: Final = 16
+# An AMS holds four trays, so a second one continues at slot 5.
+TRAYS_PER_AMS: Final = 4
+# The AMS reports 254 for the external spool and 255 for nothing loaded.
+EXTERNAL_SPOOL_INDEX: Final = 254
 
 # --- Assignment ------------------------------------------------------------
 SOURCE_RFID: Final = "rfid"

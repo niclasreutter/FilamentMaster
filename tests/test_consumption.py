@@ -220,3 +220,25 @@ async def test_pausing_does_not_count_towards_the_split(
     await hass.async_block_till_done()
 
     assert coordinator.store.get_spool(spool.id).total_consumed == 60
+
+
+async def test_the_bambu_active_tray_sensor_is_understood(
+    hass: HomeAssistant, setup_integration: MockConfigEntry
+) -> None:
+    """End to end with the attribute shape ha-bambulab actually publishes."""
+    coordinator = setup_integration.runtime_data
+    spool = coordinator.async_add_spool("generic_pla")
+    coordinator.async_assign_slot(2, spool.id)
+
+    hass.states.async_set(
+        ACTIVE_TRAY,
+        "Bambu PLA Basic",
+        {"ams_index": 0, "tray_index": 1, "type": "PLA", "remain": 80},
+    )
+    hass.states.async_set(PRINT_WEIGHT, "75")
+    hass.states.async_set(PRINT_STATE, "running")
+    await hass.async_block_till_done()
+    hass.states.async_set(PRINT_STATE, "finish")
+    await hass.async_block_till_done()
+
+    assert coordinator.store.get_spool(spool.id).total_consumed == 75

@@ -23,7 +23,7 @@ from .const import (
     TAG_KIND_SLOT,
     TAG_KIND_SPOOL,
 )
-from .models import SlotState, Spool, new_id, utcnow_iso
+from .models import SlotState, Spool, new_id, normalize_uid, utcnow_iso
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -353,9 +353,10 @@ class SpoolStore:
         spool = self.spools.get(spool_id)
         if spool is None:
             return None
-        uid = str(uid).strip().upper()
-        if not uid:
+        normalized = normalize_uid(uid)
+        if normalized is None:
             return None
+        uid = normalized
         for other in self.spools.values():
             if other.id != spool_id and uid in other.rfid_uids:
                 other.rfid_uids.remove(uid)
@@ -367,9 +368,10 @@ class SpoolStore:
     @callback
     def spool_by_rfid(self, uid: str) -> Spool | None:
         """Return the spool a Bambu tag UID belongs to."""
-        uid = str(uid).strip().upper()
-        if not uid:
+        normalized = normalize_uid(uid)
+        if normalized is None:
             return None
+        uid = normalized
         for spool in self.spools.values():
             if uid in spool.rfid_uids:
                 return spool

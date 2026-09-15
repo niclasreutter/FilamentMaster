@@ -2,7 +2,12 @@
 
 from __future__ import annotations
 
-from custom_components.filament_manager.models import FilamentType, Spool, slugify_id
+from custom_components.filament_manager.models import (
+    FilamentType,
+    Spool,
+    normalize_uid,
+    slugify_id,
+)
 
 
 def test_type_normalises_input() -> None:
@@ -60,3 +65,13 @@ def test_from_dict_ignores_unknown_keys() -> None:
 
 def test_slugify() -> None:
     assert slugify_id("Bambu Lab  PLA+ Basic") == "bambu_lab_pla_basic"
+
+
+def test_normalize_uid() -> None:
+    assert normalize_uid("04:a1:b2") == "04A1B2"
+    assert normalize_uid(" 04-a1 b2 ") == "04A1B2"
+    # An all-zero or all-F UID means "no tag", not "a tag to learn".
+    assert normalize_uid("0000000000000000") is None
+    assert normalize_uid("FFFFFFFF") is None
+    assert normalize_uid("") is None
+    assert normalize_uid(None) is None
