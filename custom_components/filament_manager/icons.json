@@ -1,0 +1,55 @@
+{
+  "entity": {
+    "binary_sensor": {
+      "loaded": {
+        "default": "mdi:printer-3d-nozzle-outline",
+        "state": { "on": "mdi:printer-3d-nozzle" }
+      },
+      "low_stock": {
+        "default": "mdi:package-variant",
+        "state": { "on": "mdi:package-variant-remove" }
+      }
+    },
+    "button": {
+      "archive": { "default": "mdi:archive-arrow-down" },
+      "duplicate": { "default": "mdi:content-duplicate" }
+    },
+    "number": {
+      "gross_weight": { "default": "mdi:scale" },
+      "low_stock_threshold": { "default": "mdi:alert-outline" },
+      "remaining_weight": { "default": "mdi:weight-gram" }
+    },
+    "sensor": {
+      "inventory_value": { "default": "mdi:cash-multiple" },
+      "inventory_weight": { "default": "mdi:warehouse" },
+      "low_stock_count": { "default": "mdi:cart-arrow-down" },
+      "remaining_length": { "default": "mdi:tape-measure" },
+      "remaining_percent": { "default": "mdi:gauge" },
+      "remaining_weight": { "default": "mdi:weight-gram" },
+      "slot": { "default": "mdi:tray-full" },
+      "spool_count": { "default": "mdi:format-list-numbered" },
+      "total_consumed": { "default": "mdi:printer-3d" }
+    }
+  },
+  "services": {
+    "add_spool": { "service": "mdi:plus-box" },
+    "add_type": { "service": "mdi:tag-plus" },
+    "add_vendor": { "service": "mdi:factory" },
+    "archive_spool": { "service": "mdi:archive-arrow-down" },
+    "assign_slot": { "service": "mdi:tray-arrow-down" },
+    "clear_slot": { "service": "mdi:tray-remove" },
+    "consume": { "service": "mdi:printer-3d-nozzle" },
+    "correct_weight": { "service": "mdi:scale-balance" },
+    "delete_spool": { "service": "mdi:delete" },
+    "duplicate_spool": { "service": "mdi:content-duplicate" },
+    "export_contribution": { "service": "mdi:source-pull" },
+    "export_db": { "service": "mdi:database-export" },
+    "import_db": { "service": "mdi:database-import" },
+    "learn_rfid": { "service": "mdi:nfc-search-variant" },
+    "link_tag": { "service": "mdi:nfc-tap" },
+    "reload_db": { "service": "mdi:refresh" },
+    "restore_spool": { "service": "mdi:archive-arrow-up" },
+    "unlink_tag": { "service": "mdi:nfc-variant-off" },
+    "update_spool": { "service": "mdi:pencil" }
+  }
+}

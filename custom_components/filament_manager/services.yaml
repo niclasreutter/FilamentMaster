@@ -1,0 +1,387 @@
+add_spool:
+  fields:
+    type_id:
+      required: true
+      example: bambulab_pla_basic
+      selector:
+        text:
+    initial_weight:
+      example: 1000
+      selector:
+        number:
+          min: 0
+          max: 10000
+          step: 1
+          unit_of_measurement: g
+          mode: box
+    remaining_weight:
+      example: 1000
+      selector:
+        number:
+          min: 0
+          max: 10000
+          step: 1
+          unit_of_measurement: g
+          mode: box
+    purchase_date:
+      selector:
+        date:
+    price:
+      example: 24.99
+      selector:
+        number:
+          min: 0
+          max: 1000
+          step: 0.01
+          mode: box
+    location:
+      example: Dry box 1
+      selector:
+        text:
+    note:
+      selector:
+        text:
+          multiline: true
+    low_stock_threshold:
+      selector:
+        number:
+          min: 0
+          max: 2000
+          step: 10
+          unit_of_measurement: g
+          mode: box
+    count:
+      default: 1
+      selector:
+        number:
+          min: 1
+          max: 50
+          step: 1
+          mode: box
+
+update_spool:
+  fields:
+    spool_id:
+      required: true
+      selector:
+        text:
+    type_id:
+      selector:
+        text:
+    location:
+      selector:
+        text:
+    price:
+      selector:
+        number:
+          min: 0
+          max: 1000
+          step: 0.01
+          mode: box
+    purchase_date:
+      selector:
+        date:
+    note:
+      selector:
+        text:
+          multiline: true
+    low_stock_threshold:
+      selector:
+        number:
+          min: 0
+          max: 2000
+          step: 10
+          unit_of_measurement: g
+          mode: box
+
+duplicate_spool:
+  fields:
+    spool_id:
+      required: true
+      selector:
+        text:
+
+consume:
+  fields:
+    spool_id:
+      selector:
+        text:
+    slot:
+      selector:
+        number:
+          min: 1
+          max: 16
+          step: 1
+          mode: box
+    amount:
+      example: 42.5
+      selector:
+        number:
+          min: 0
+          max: 10000
+          step: 0.1
+          unit_of_measurement: g
+          mode: box
+    length:
+      example: 12.5
+      selector:
+        number:
+          min: 0
+          max: 10000
+          step: 0.1
+          unit_of_measurement: m
+          mode: box
+
+assign_slot:
+  fields:
+    slot:
+      required: true
+      selector:
+        number:
+          min: 1
+          max: 16
+          step: 1
+          mode: box
+    spool_id:
+      selector:
+        text:
+
+clear_slot:
+  fields:
+    slot:
+      required: true
+      selector:
+        number:
+          min: 1
+          max: 16
+          step: 1
+          mode: box
+
+archive_spool:
+  fields:
+    spool_id:
+      required: true
+      selector:
+        text:
+
+restore_spool:
+  fields:
+    spool_id:
+      required: true
+      selector:
+        text:
+
+delete_spool:
+  fields:
+    spool_id:
+      required: true
+      selector:
+        text:
+
+correct_weight:
+  fields:
+    spool_id:
+      required: true
+      selector:
+        text:
+    gross_weight:
+      example: 1212
+      selector:
+        number:
+          min: 0
+          max: 10000
+          step: 1
+          unit_of_measurement: g
+          mode: box
+    remaining_weight:
+      selector:
+        number:
+          min: 0
+          max: 10000
+          step: 1
+          unit_of_measurement: g
+          mode: box
+
+add_vendor:
+  fields:
+    name:
+      required: true
+      selector:
+        text:
+    vendor_id:
+      selector:
+        text:
+    website:
+      selector:
+        text:
+
+add_type:
+  fields:
+    vendor_id:
+      required: true
+      selector:
+        text:
+    name:
+      required: true
+      selector:
+        text:
+    material:
+      required: true
+      example: PLA
+      selector:
+        text:
+    type_id:
+      selector:
+        text:
+    color_name:
+      selector:
+        text:
+    color_hex:
+      example: "#1F6FEB"
+      selector:
+        text:
+    diameter:
+      default: 1.75
+      selector:
+        select:
+          options:
+            - "1.75"
+            - "2.85"
+    density:
+      selector:
+        number:
+          min: 0.5
+          max: 3
+          step: 0.01
+          mode: box
+    net_weight:
+      default: 1000
+      selector:
+        number:
+          min: 0
+          max: 10000
+          step: 1
+          unit_of_measurement: g
+          mode: box
+    spool_weight:
+      default: 0
+      selector:
+        number:
+          min: 0
+          max: 2000
+          step: 1
+          unit_of_measurement: g
+          mode: box
+    spool_type:
+      default: plastic
+      selector:
+        select:
+          options:
+            - plastic
+            - cardboard
+            - refill
+            - unknown
+    nozzle_temp_min:
+      selector:
+        number:
+          min: 100
+          max: 500
+          step: 1
+          unit_of_measurement: "°C"
+          mode: box
+    nozzle_temp_max:
+      selector:
+        number:
+          min: 100
+          max: 500
+          step: 1
+          unit_of_measurement: "°C"
+          mode: box
+    bed_temp:
+      selector:
+        number:
+          min: 0
+          max: 200
+          step: 1
+          unit_of_measurement: "°C"
+          mode: box
+    gtin:
+      example: "4260639533720"
+      selector:
+        object:
+
+link_tag:
+  fields:
+    tag_id:
+      required: true
+      selector:
+        text:
+    spool_id:
+      selector:
+        text:
+    slot:
+      selector:
+        number:
+          min: 1
+          max: 16
+          step: 1
+          mode: box
+
+unlink_tag:
+  fields:
+    tag_id:
+      required: true
+      selector:
+        text:
+
+learn_rfid:
+  fields:
+    spool_id:
+      required: true
+      selector:
+        text:
+    rfid_uid:
+      required: true
+      selector:
+        text:
+    slot:
+      selector:
+        number:
+          min: 1
+          max: 16
+          step: 1
+          mode: box
+
+import_db:
+  fields:
+    filename:
+      example: filament_export.json
+      selector:
+        text:
+    data:
+      selector:
+        object:
+    overwrite:
+      default: false
+      selector:
+        boolean:
+
+export_db:
+  fields:
+    filename:
+      example: filament_export.json
+      selector:
+        text:
+    only_user:
+      default: false
+      selector:
+        boolean:
+
+export_contribution:
+  fields:
+    filename:
+      example: filament_contribution.json
+      selector:
+        text:
+
+reload_db:

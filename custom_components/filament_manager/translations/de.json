@@ -1,0 +1,664 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Filament Manager",
+        "description": "Filamentbestand direkt in Home Assistant verwalten.\n\nErkannte AMS-Tray-Sensoren: {discovered}\n\nAlles Weitere — Drucker-Entities, Schwellen, Filamenttypen — richtest du danach unter Konfigurieren ein.",
+        "data": {
+          "slot_count": "Anzahl AMS-Slots",
+          "low_stock_threshold": "Schwelle für niedrigen Bestand",
+          "currency": "Währung"
+        },
+        "data_description": {
+          "slot_count": "Pro Slot entsteht ein Sensor. Vier für ein AMS, acht für zwei.",
+          "low_stock_threshold": "Unter diesem Gewicht gilt eine Rolle als zur Neige gehend.",
+          "currency": "Einheit des Bestandswert-Sensors, zum Beispiel EUR."
+        }
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "Der Filament Manager ist bereits eingerichtet."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Filament Manager",
+        "description": "Was möchtest du tun?",
+        "menu_options": {
+          "add_spool": "Rolle anlegen",
+          "manage_spool": "Rollen verwalten",
+          "add_type": "Filamenttyp anlegen",
+          "add_vendor": "Hersteller anlegen",
+          "printer": "Drucker-Entities",
+          "settings": "Einstellungen",
+          "tools": "Import, Export, Beitragen",
+          "done": "Schließen"
+        }
+      },
+      "add_spool": {
+        "title": "Rolle anlegen",
+        "description": "Bekannten Filamenttyp auswählen. Gewicht leer lassen, um das Nenngewicht des Typs zu übernehmen.",
+        "data": {
+          "type_id": "Filamenttyp",
+          "count": "Wie viele identische Rollen",
+          "purchase_date": "Kaufdatum",
+          "price": "Preis",
+          "location": "Lagerort",
+          "initial_weight": "Startgewicht",
+          "low_stock_threshold": "Schwelle für niedrigen Bestand"
+        },
+        "data_description": {
+          "type_id": "Sortiert nach zuletzt benutzt.",
+          "count": "Mehrere gleiche gekauft? In einem Rutsch anlegen.",
+          "location": "Trockenbox, Regal, Schublade — was beim Wiederfinden hilft.",
+          "low_stock_threshold": "Leer lassen für die globale Schwelle."
+        }
+      },
+      "manage_spool": {
+        "title": "Rollen verwalten",
+        "data": {
+          "spool_id": "Rolle"
+        }
+      },
+      "spool_actions": {
+        "title": "{spool}",
+        "description": "{remaining} g übrig · {state}",
+        "menu_options": {
+          "edit_spool": "Bearbeiten",
+          "assign_spool": "Slot zuweisen",
+          "link_spool_tag": "NFC- oder RFID-Tag verknüpfen",
+          "duplicate_spool": "Duplizieren (nachgekauft)",
+          "archive_spool": "Archivieren oder zurückholen",
+          "delete_spool": "Löschen",
+          "init": "Zurück"
+        }
+      },
+      "edit_spool": {
+        "title": "{spool} bearbeiten",
+        "data": {
+          "remaining_weight": "Restfilament",
+          "initial_weight": "Startgewicht",
+          "location": "Lagerort",
+          "price": "Preis",
+          "purchase_date": "Kaufdatum",
+          "low_stock_threshold": "Schwelle für niedrigen Bestand",
+          "note": "Notiz"
+        },
+        "data_description": {
+          "remaining_weight": "Netto-Filament ohne die leere Spule.",
+          "low_stock_threshold": "Leer lassen für die globale Schwelle."
+        }
+      },
+      "assign_spool": {
+        "title": "{spool} einlegen",
+        "description": "Eine Zuweisung von Hand wird als solche gespeichert und bleibt so von einer automatischen Erkennung unterscheidbar.",
+        "data": {
+          "slot": "Slot"
+        }
+      },
+      "link_spool_tag": {
+        "title": "Tags für {spool}",
+        "description": "NFC-Sticker: Tag-ID aus Einstellungen → Tags einfügen.\nBambu-RFID: die vom AMS gemeldete UID eintragen. Bambu-Rollen tragen ein Tag pro Seite — also einmal pro Seite anlernen.\n\nBekannte RFID-UIDs: {uids}",
+        "data": {
+          "tag_id": "NFC-Tag-ID",
+          "rfid_uid": "Bambu-RFID-UID"
+        }
+      },
+      "delete_spool": {
+        "title": "{spool} löschen?",
+        "description": "Entfernt die Rolle samt Historie endgültig. Archivieren behält die Daten.",
+        "data": {
+          "confirm": "Ja, löschen"
+        }
+      },
+      "add_vendor": {
+        "title": "Hersteller anlegen",
+        "description": "Selbst angelegte Hersteller landen in /config/filament_db.json.",
+        "data": {
+          "name": "Name",
+          "website": "Website"
+        }
+      },
+      "add_type": {
+        "title": "Filamenttyp anlegen",
+        "description": "Ein Typ ist das Produkt, das du nachkaufen kannst. Einzelne Rollen entstehen darauf aufbauend.\n\nDas Leergewicht der Spule ist das eine Feld, das sich zu messen lohnt: erst damit wird aus einem Küchenwaagen-Wert das Restfilament.",
+        "data": {
+          "vendor_id": "Hersteller",
+          "name": "Produktname",
+          "material": "Material",
+          "color_name": "Farbname",
+          "color": "Farbe",
+          "diameter": "Durchmesser",
+          "density": "Dichte",
+          "net_weight": "Nenngewicht Filament",
+          "spool_weight": "Leergewicht der Spule",
+          "spool_type": "Spulentyp",
+          "nozzle_temp_min": "Düsentemperatur, Minimum",
+          "nozzle_temp_max": "Düsentemperatur, Maximum",
+          "bed_temp": "Betttemperatur",
+          "gtin": "Barcodes (EAN/UPC)",
+          "add_spool": "Direkt eine Rolle dieses Typs anlegen"
+        },
+        "data_description": {
+          "density": "In g/cm³, für die Umrechnung in Länge. Leer lassen für den Materialstandard.",
+          "spool_weight": "Eine leere Spule dieses Produkts einmal wiegen.",
+          "gtin": "Mehrere Codes mit Komma trennen. Ein Barcode identifiziert das Produkt, nicht die einzelne Rolle."
+        }
+      },
+      "printer": {
+        "title": "Drucker-Entities",
+        "description": "Die Entities deiner Drucker-Integration zuordnen.\n\nErkannte AMS-Tray-Sensoren: {discovered}",
+        "data": {
+          "tray_1": "Tray-Sensor Slot 1",
+          "tray_2": "Tray-Sensor Slot 2",
+          "tray_3": "Tray-Sensor Slot 3",
+          "tray_4": "Tray-Sensor Slot 4",
+          "tray_5": "Tray-Sensor Slot 5",
+          "tray_6": "Tray-Sensor Slot 6",
+          "tray_7": "Tray-Sensor Slot 7",
+          "tray_8": "Tray-Sensor Slot 8",
+          "tray_9": "Tray-Sensor Slot 9",
+          "tray_10": "Tray-Sensor Slot 10",
+          "tray_11": "Tray-Sensor Slot 11",
+          "tray_12": "Tray-Sensor Slot 12",
+          "tray_13": "Tray-Sensor Slot 13",
+          "tray_14": "Tray-Sensor Slot 14",
+          "tray_15": "Tray-Sensor Slot 15",
+          "tray_16": "Tray-Sensor Slot 16",
+          "print_state_entity": "Druckstatus",
+          "print_weight_entity": "Druckgewicht",
+          "active_tray_entity": "Aktives Tray"
+        },
+        "data_description": {
+          "print_state_entity": "Löst den Abzug am Druckende aus.",
+          "print_weight_entity": "Gramm Filament, die der laufende Auftrag braucht.",
+          "active_tray_entity": "Aus welchem Slot der Drucker zieht; nötig, um einen Auftrag auf mehrere Slots aufzuteilen."
+        }
+      },
+      "settings": {
+        "title": "Einstellungen",
+        "data": {
+          "slot_count": "Anzahl AMS-Slots",
+          "low_stock_threshold": "Schwelle für niedrigen Bestand",
+          "color_tolerance": "Farbtoleranz",
+          "currency": "Währung",
+          "notify_service": "Benachrichtigungsdienst",
+          "auto_assign_rfid": "Automatisch per RFID zuordnen",
+          "auto_assign_heuristic": "Automatisch per Material und Farbe zuordnen",
+          "auto_consume": "Filament am Druckende abziehen",
+          "split_strategy": "Aufteilung über mehrere Slots"
+        },
+        "data_description": {
+          "color_tolerance": "Abstand im CIE-Lab-Raum, der noch als dieselbe Farbe gilt. Rund 25 ist ein guter Start, kleiner ist strenger.",
+          "notify_service": "Für Actionable Notifications, zum Beispiel notify.mobile_app_pixel.",
+          "split_strategy": "Wie ein Auftrag über mehrere Slots verbucht wird: anteilig nach aktiver Zeit oder komplett auf den längsten Slot."
+        }
+      },
+      "tools": {
+        "title": "Import, Export, Beitragen",
+        "menu_options": {
+          "import_db": "Filamentdatenbank importieren",
+          "export_db": "Filamentdatenbank exportieren",
+          "contribute": "Beitragen-Snippet",
+          "link_slot_tag": "NFC-Tag mit Slot verknüpfen",
+          "init": "Zurück"
+        }
+      },
+      "import_db": {
+        "title": "Filamentdatenbank importieren",
+        "description": "JSON-Dokument mit 'vendors' und 'types' einfügen.",
+        "data": {
+          "document": "JSON",
+          "overwrite": "Bestehende Einträge überschreiben"
+        }
+      },
+      "export_db": {
+        "title": "Filamentdatenbank",
+        "description": "```json\n{document}\n```"
+      },
+      "contribute": {
+        "title": "Beitragen-Snippet",
+        "description": "Deine eigenen Filamenttypen, fertig zum Einfügen in einen Pull Request auf die mitgelieferte Datenbank.\n\n```json\n{snippet}\n```"
+      },
+      "link_slot_tag": {
+        "title": "NFC-Tag mit Slot verknüpfen",
+        "description": "Für die Zwei-Sticker-Variante: einer pro Rolle, vier am AMS. Rolle scannen, Slot scannen, fertig — komplett ohne Bildschirm.\n\nVerknüpft: {linked}",
+        "data": {
+          "tag_id": "Tag-ID",
+          "slot": "Slot"
+        }
+      }
+    },
+    "error": {
+      "no_types": "Es gibt noch keinen Filamenttyp. Lege zuerst einen an.",
+      "no_spools": "Es gibt noch keine Rolle.",
+      "tag_required": "Gib eine NFC-Tag-ID oder eine RFID-UID ein.",
+      "write_failed": "/config/filament_db.json konnte nicht geschrieben werden. Siehe Log.",
+      "invalid_json": "Das ist kein gültiges JSON.",
+      "import_failed": "Der Import ist fehlgeschlagen. Siehe Log."
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "loaded": {
+        "name": "Eingelegt"
+      },
+      "low_stock": {
+        "name": "Niedriger Bestand"
+      }
+    },
+    "button": {
+      "archive": {
+        "name": "Archivieren"
+      },
+      "duplicate": {
+        "name": "Duplizieren"
+      }
+    },
+    "number": {
+      "gross_weight": {
+        "name": "Gewogenes Bruttogewicht"
+      },
+      "low_stock_threshold": {
+        "name": "Schwelle für niedrigen Bestand"
+      },
+      "remaining_weight": {
+        "name": "Restfilament setzen"
+      }
+    },
+    "sensor": {
+      "inventory_value": {
+        "name": "Bestandswert"
+      },
+      "inventory_weight": {
+        "name": "Filament im Bestand"
+      },
+      "low_stock_count": {
+        "name": "Rollen zur Neige"
+      },
+      "remaining_length": {
+        "name": "Restlänge"
+      },
+      "remaining_percent": {
+        "name": "Rest"
+      },
+      "remaining_weight": {
+        "name": "Restfilament"
+      },
+      "slot": {
+        "name": "Slot {slot}"
+      },
+      "spool_count": {
+        "name": "Rollen im Bestand"
+      },
+      "total_consumed": {
+        "name": "Verbraucht gesamt"
+      }
+    }
+  },
+  "issues": {
+    "overdraw": {
+      "title": "Unplausibler Verbrauch bei {spool}",
+      "description": "Ein Druck meldete {requested} g für {spool} — {overdraw} g mehr, als auf der Rolle war. Statt eines negativen Werts steht die Rolle jetzt auf 0 g.\n\nWiege die Rolle nach und korrigiere sie über das Bruttogewicht, dann verschwindet dieser Hinweis."
+    }
+  },
+  "services": {
+    "add_spool": {
+      "name": "Rolle anlegen",
+      "description": "Legt eine oder mehrere Rollen eines bekannten Filamenttyps an.",
+      "fields": {
+        "type_id": {
+          "name": "Filamenttyp",
+          "description": "Id des Typs, zum Beispiel bambulab_pla_basic."
+        },
+        "initial_weight": {
+          "name": "Startgewicht",
+          "description": "Standard ist das Nenngewicht des Typs."
+        },
+        "remaining_weight": {
+          "name": "Restfilament",
+          "description": "Für eine bereits angebrochene Rolle."
+        },
+        "purchase_date": {
+          "name": "Kaufdatum",
+          "description": "Wann die Rolle gekauft wurde."
+        },
+        "price": {
+          "name": "Preis",
+          "description": "Gezahlter Preis, fließt in den Bestandswert."
+        },
+        "location": {
+          "name": "Lagerort",
+          "description": "Wo die Rolle liegt."
+        },
+        "note": {
+          "name": "Notiz",
+          "description": "Freitext."
+        },
+        "low_stock_threshold": {
+          "name": "Schwelle für niedrigen Bestand",
+          "description": "Überschreibt die globale Schwelle."
+        },
+        "count": {
+          "name": "Anzahl",
+          "description": "Wie viele identische Rollen angelegt werden."
+        }
+      }
+    },
+    "update_spool": {
+      "name": "Rolle aktualisieren",
+      "description": "Ändert die Stammfelder einer Rolle.",
+      "fields": {
+        "spool_id": {
+          "name": "Rolle",
+          "description": "Id der Rolle."
+        },
+        "type_id": {
+          "name": "Filamenttyp",
+          "description": "Rolle einem anderen Typ zuordnen."
+        },
+        "location": {
+          "name": "Lagerort",
+          "description": "Wo die Rolle liegt."
+        },
+        "price": {
+          "name": "Preis",
+          "description": "Gezahlter Preis."
+        },
+        "purchase_date": {
+          "name": "Kaufdatum",
+          "description": "Wann die Rolle gekauft wurde."
+        },
+        "note": {
+          "name": "Notiz",
+          "description": "Freitext."
+        },
+        "low_stock_threshold": {
+          "name": "Schwelle für niedrigen Bestand",
+          "description": "Überschreibt die globale Schwelle."
+        }
+      }
+    },
+    "duplicate_spool": {
+      "name": "Rolle duplizieren",
+      "description": "Legt eine weitere, volle Rolle desselben Typs an.",
+      "fields": {
+        "spool_id": {
+          "name": "Rolle",
+          "description": "Id der Vorlage."
+        }
+      }
+    },
+    "consume": {
+      "name": "Filament abziehen",
+      "description": "Zieht Filament von einer Rolle ab, nach Gewicht oder Länge.",
+      "fields": {
+        "spool_id": {
+          "name": "Rolle",
+          "description": "Id der Rolle. Alternativ einen Slot angeben."
+        },
+        "slot": {
+          "name": "Slot",
+          "description": "Zieht von der Rolle ab, die in diesem Slot liegt."
+        },
+        "amount": {
+          "name": "Gewicht",
+          "description": "Gramm, die abgezogen werden."
+        },
+        "length": {
+          "name": "Länge",
+          "description": "Meter, umgerechnet über die Dichte des Typs."
+        }
+      }
+    },
+    "assign_slot": {
+      "name": "Slot zuweisen",
+      "description": "Hält fest, welche Rolle in einem Slot liegt.",
+      "fields": {
+        "slot": {
+          "name": "Slot",
+          "description": "Nummer des AMS-Slots."
+        },
+        "spool_id": {
+          "name": "Rolle",
+          "description": "Id der Rolle; weglassen, um den Slot zu leeren."
+        }
+      }
+    },
+    "clear_slot": {
+      "name": "Slot leeren",
+      "description": "Markiert einen Slot als leer.",
+      "fields": {
+        "slot": {
+          "name": "Slot",
+          "description": "Nummer des AMS-Slots."
+        }
+      }
+    },
+    "archive_spool": {
+      "name": "Rolle archivieren",
+      "description": "Entfernt die Entities einer Rolle und behält ihre Daten.",
+      "fields": {
+        "spool_id": {
+          "name": "Rolle",
+          "description": "Id der Rolle."
+        }
+      }
+    },
+    "restore_spool": {
+      "name": "Rolle zurückholen",
+      "description": "Holt eine archivierte Rolle samt Entities zurück.",
+      "fields": {
+        "spool_id": {
+          "name": "Rolle",
+          "description": "Id der Rolle."
+        }
+      }
+    },
+    "delete_spool": {
+      "name": "Rolle löschen",
+      "description": "Löscht eine Rolle samt Historie endgültig.",
+      "fields": {
+        "spool_id": {
+          "name": "Rolle",
+          "description": "Id der Rolle."
+        }
+      }
+    },
+    "correct_weight": {
+      "name": "Gewicht korrigieren",
+      "description": "Korrigiert eine Rolle nach dem Nachwiegen.",
+      "fields": {
+        "spool_id": {
+          "name": "Rolle",
+          "description": "Id der Rolle."
+        },
+        "gross_weight": {
+          "name": "Bruttogewicht",
+          "description": "Wert inklusive leerer Spule; deren Gewicht wird abgezogen."
+        },
+        "remaining_weight": {
+          "name": "Restfilament",
+          "description": "Netto-Filament, falls du schon abgezogen hast."
+        }
+      }
+    },
+    "add_vendor": {
+      "name": "Hersteller anlegen",
+      "description": "Legt einen Hersteller in /config/filament_db.json an.",
+      "fields": {
+        "name": {
+          "name": "Name",
+          "description": "Name des Herstellers."
+        },
+        "vendor_id": {
+          "name": "Id",
+          "description": "Wird aus dem Namen abgeleitet, wenn leer."
+        },
+        "website": {
+          "name": "Website",
+          "description": "Link zum Hersteller."
+        }
+      }
+    },
+    "add_type": {
+      "name": "Filamenttyp anlegen",
+      "description": "Legt einen Filamenttyp in /config/filament_db.json an.",
+      "fields": {
+        "vendor_id": {
+          "name": "Hersteller",
+          "description": "Id des Herstellers."
+        },
+        "name": {
+          "name": "Produktname",
+          "description": "Zum Beispiel 'PLA Basic'."
+        },
+        "material": {
+          "name": "Material",
+          "description": "PLA, PETG, ASA, …"
+        },
+        "type_id": {
+          "name": "Id",
+          "description": "Wird aus dem Namen abgeleitet, wenn leer."
+        },
+        "color_name": {
+          "name": "Farbname",
+          "description": "Zum Beispiel 'Jade White'."
+        },
+        "color_hex": {
+          "name": "Farbe",
+          "description": "Hex-Wert, zum Beispiel #1F6FEB."
+        },
+        "diameter": {
+          "name": "Durchmesser",
+          "description": "1.75 oder 2.85 mm."
+        },
+        "density": {
+          "name": "Dichte",
+          "description": "g/cm³; Standard ist der Materialwert."
+        },
+        "net_weight": {
+          "name": "Nenngewicht",
+          "description": "Filamentgewicht einer vollen Rolle."
+        },
+        "spool_weight": {
+          "name": "Leergewicht der Spule",
+          "description": "Nötig für die Korrektur per Nachwiegen."
+        },
+        "spool_type": {
+          "name": "Spulentyp",
+          "description": "plastic, cardboard, refill oder unknown."
+        },
+        "nozzle_temp_min": {
+          "name": "Düsentemperatur, Minimum",
+          "description": "Unteres Ende des empfohlenen Bereichs."
+        },
+        "nozzle_temp_max": {
+          "name": "Düsentemperatur, Maximum",
+          "description": "Oberes Ende des empfohlenen Bereichs."
+        },
+        "bed_temp": {
+          "name": "Betttemperatur",
+          "description": "Empfohlene Betttemperatur."
+        },
+        "gtin": {
+          "name": "Barcodes",
+          "description": "Liste der EAN/UPC-Codes dieses Produkts."
+        }
+      }
+    },
+    "link_tag": {
+      "name": "Tag verknüpfen",
+      "description": "Verknüpft einen NFC-Tag mit einer Rolle oder einem AMS-Slot.",
+      "fields": {
+        "tag_id": {
+          "name": "Tag",
+          "description": "Tag-ID aus Einstellungen → Tags."
+        },
+        "spool_id": {
+          "name": "Rolle",
+          "description": "Id der Rolle, auf der der Sticker klebt."
+        },
+        "slot": {
+          "name": "Slot",
+          "description": "Slot, den der Sticker bezeichnet."
+        }
+      }
+    },
+    "unlink_tag": {
+      "name": "Tag lösen",
+      "description": "Entfernt eine Tag-Zuordnung, der Sticker wird wiederverwendbar.",
+      "fields": {
+        "tag_id": {
+          "name": "Tag",
+          "description": "Tag-ID."
+        }
+      }
+    },
+    "learn_rfid": {
+      "name": "RFID-Tag anlernen",
+      "description": "Lernt eine Bambu-RFID-UID auf eine Rolle an. Bambu-Spulen tragen ein Tag pro Seite — einmal pro Seite ausführen.",
+      "fields": {
+        "spool_id": {
+          "name": "Rolle",
+          "description": "Id der Rolle."
+        },
+        "rfid_uid": {
+          "name": "RFID-UID",
+          "description": "Vom AMS gemeldete UID."
+        },
+        "slot": {
+          "name": "Slot",
+          "description": "Die Rolle gleich diesem Slot zuweisen."
+        }
+      }
+    },
+    "import_db": {
+      "name": "Filamentdatenbank importieren",
+      "description": "Führt eine Filamentdatenbank mit der eigenen zusammen.",
+      "fields": {
+        "filename": {
+          "name": "Datei",
+          "description": "Pfad im Konfigurationsverzeichnis oder einem erlaubten Verzeichnis."
+        },
+        "data": {
+          "name": "Daten",
+          "description": "Das Dokument direkt, statt einer Datei."
+        },
+        "overwrite": {
+          "name": "Überschreiben",
+          "description": "Vorhandene Einträge ersetzen."
+        }
+      }
+    },
+    "export_db": {
+      "name": "Filamentdatenbank exportieren",
+      "description": "Gibt die Filamentdatenbank zurück und schreibt sie auf Wunsch in eine Datei.",
+      "fields": {
+        "filename": {
+          "name": "Datei",
+          "description": "Wohin der Export geschrieben wird."
+        },
+        "only_user": {
+          "name": "Nur eigene Einträge",
+          "description": "Nur eigene Typen exportieren, nicht die mitgelieferten."
+        }
+      }
+    },
+    "export_contribution": {
+      "name": "Beitragen-Snippet",
+      "description": "Gibt die eigenen Filamenttypen als PR-fertiges Snippet zurück.",
+      "fields": {
+        "filename": {
+          "name": "Datei",
+          "description": "Wohin das Snippet geschrieben wird."
+        }
+      }
+    },
+    "reload_db": {
+      "name": "Filamentdatenbank neu laden",
+      "description": "Liest die mitgelieferte und die eigene Filamentdatenbank neu von der Platte."
+    }
+  }
+}

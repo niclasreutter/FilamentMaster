@@ -1,0 +1,664 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Filament Manager",
+        "description": "Track your filament inventory inside Home Assistant.\n\nDetected AMS tray sensors: {discovered}\n\nEverything else — printer entities, thresholds, filament types — is configured afterwards under Configure.",
+        "data": {
+          "slot_count": "Number of AMS slots",
+          "low_stock_threshold": "Low stock threshold",
+          "currency": "Currency"
+        },
+        "data_description": {
+          "slot_count": "One sensor is created per slot. Four for one AMS, eight for two.",
+          "low_stock_threshold": "A roll counts as running out below this weight.",
+          "currency": "Unit of the inventory value sensor, for example EUR."
+        }
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "Filament Manager is already set up."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Filament Manager",
+        "description": "What would you like to do?",
+        "menu_options": {
+          "add_spool": "Add spool",
+          "manage_spool": "Manage spools",
+          "add_type": "Add filament type",
+          "add_vendor": "Add manufacturer",
+          "printer": "Printer entities",
+          "settings": "Settings",
+          "tools": "Import, export, contribute",
+          "done": "Close"
+        }
+      },
+      "add_spool": {
+        "title": "Add spool",
+        "description": "Pick a known filament type. Leave the weight empty to use the type's nominal weight.",
+        "data": {
+          "type_id": "Filament type",
+          "count": "How many identical rolls",
+          "purchase_date": "Purchase date",
+          "price": "Price",
+          "location": "Location",
+          "initial_weight": "Starting weight",
+          "low_stock_threshold": "Low stock threshold"
+        },
+        "data_description": {
+          "type_id": "Sorted by most recently used.",
+          "count": "Bought several of the same? Add them in one go.",
+          "location": "Dry box, shelf, drawer — whatever helps you find it.",
+          "low_stock_threshold": "Leave empty to use the global threshold."
+        }
+      },
+      "manage_spool": {
+        "title": "Manage spools",
+        "data": {
+          "spool_id": "Spool"
+        }
+      },
+      "spool_actions": {
+        "title": "{spool}",
+        "description": "{remaining} g left · {state}",
+        "menu_options": {
+          "edit_spool": "Edit",
+          "assign_spool": "Assign to a slot",
+          "link_spool_tag": "Link NFC or RFID tag",
+          "duplicate_spool": "Duplicate (bought another one)",
+          "archive_spool": "Archive or restore",
+          "delete_spool": "Delete",
+          "init": "Back"
+        }
+      },
+      "edit_spool": {
+        "title": "Edit {spool}",
+        "data": {
+          "remaining_weight": "Remaining filament",
+          "initial_weight": "Starting weight",
+          "location": "Location",
+          "price": "Price",
+          "purchase_date": "Purchase date",
+          "low_stock_threshold": "Low stock threshold",
+          "note": "Note"
+        },
+        "data_description": {
+          "remaining_weight": "Net filament without the empty spool.",
+          "low_stock_threshold": "Leave empty to use the global threshold."
+        }
+      },
+      "assign_spool": {
+        "title": "Load {spool}",
+        "description": "Assigning by hand is recorded as such, so it stays distinguishable from an automatic match.",
+        "data": {
+          "slot": "Slot"
+        }
+      },
+      "link_spool_tag": {
+        "title": "Tags for {spool}",
+        "description": "NFC sticker: paste the tag ID from Settings → Tags.\nBambu RFID: add the UID the AMS reported. Bambu rolls carry one tag per side, so run this once per side.\n\nKnown RFID UIDs: {uids}",
+        "data": {
+          "tag_id": "NFC tag ID",
+          "rfid_uid": "Bambu RFID UID"
+        }
+      },
+      "delete_spool": {
+        "title": "Delete {spool}?",
+        "description": "This removes the roll and its history for good. Archiving keeps the data.",
+        "data": {
+          "confirm": "Yes, delete it"
+        }
+      },
+      "add_vendor": {
+        "title": "Add manufacturer",
+        "description": "Manufacturers you add land in /config/filament_db.json.",
+        "data": {
+          "name": "Name",
+          "website": "Website"
+        }
+      },
+      "add_type": {
+        "title": "Add filament type",
+        "description": "A type is the product you can buy again. Individual rolls are added on top of it.\n\nThe empty spool weight is the one field worth measuring: it turns a kitchen scale reading into the remaining filament.",
+        "data": {
+          "vendor_id": "Manufacturer",
+          "name": "Product name",
+          "material": "Material",
+          "color_name": "Colour name",
+          "color": "Colour",
+          "diameter": "Diameter",
+          "density": "Density",
+          "net_weight": "Nominal filament weight",
+          "spool_weight": "Empty spool weight",
+          "spool_type": "Spool type",
+          "nozzle_temp_min": "Nozzle temperature, minimum",
+          "nozzle_temp_max": "Nozzle temperature, maximum",
+          "bed_temp": "Bed temperature",
+          "gtin": "Barcodes (EAN/UPC)",
+          "add_spool": "Add a roll of this type right away"
+        },
+        "data_description": {
+          "density": "In g/cm³, used to convert weight to length. Leave empty for the material default.",
+          "spool_weight": "Weigh an empty spool of this product once.",
+          "gtin": "Several codes separated by commas. A barcode identifies the product, not the individual roll."
+        }
+      },
+      "printer": {
+        "title": "Printer entities",
+        "description": "Point the integration at the entities of your printer integration.\n\nDetected AMS tray sensors: {discovered}",
+        "data": {
+          "tray_1": "Slot 1 tray sensor",
+          "tray_2": "Slot 2 tray sensor",
+          "tray_3": "Slot 3 tray sensor",
+          "tray_4": "Slot 4 tray sensor",
+          "tray_5": "Slot 5 tray sensor",
+          "tray_6": "Slot 6 tray sensor",
+          "tray_7": "Slot 7 tray sensor",
+          "tray_8": "Slot 8 tray sensor",
+          "tray_9": "Slot 9 tray sensor",
+          "tray_10": "Slot 10 tray sensor",
+          "tray_11": "Slot 11 tray sensor",
+          "tray_12": "Slot 12 tray sensor",
+          "tray_13": "Slot 13 tray sensor",
+          "tray_14": "Slot 14 tray sensor",
+          "tray_15": "Slot 15 tray sensor",
+          "tray_16": "Slot 16 tray sensor",
+          "print_state_entity": "Print status",
+          "print_weight_entity": "Print weight",
+          "active_tray_entity": "Active tray"
+        },
+        "data_description": {
+          "print_state_entity": "Triggers the deduction when a print finishes.",
+          "print_weight_entity": "Grams of filament the current job needs.",
+          "active_tray_entity": "Which slot the printer is pulling from; used to split a job across slots."
+        }
+      },
+      "settings": {
+        "title": "Settings",
+        "data": {
+          "slot_count": "Number of AMS slots",
+          "low_stock_threshold": "Low stock threshold",
+          "color_tolerance": "Colour tolerance",
+          "currency": "Currency",
+          "notify_service": "Notification service",
+          "auto_assign_rfid": "Assign automatically by RFID",
+          "auto_assign_heuristic": "Assign automatically by material and colour",
+          "auto_consume": "Subtract filament when a print finishes",
+          "split_strategy": "Split across slots"
+        },
+        "data_description": {
+          "color_tolerance": "Distance in CIE Lab that still counts as the same colour. Around 25 is a good start; lower is stricter.",
+          "notify_service": "For actionable notifications, for example notify.mobile_app_pixel.",
+          "split_strategy": "How a job that used several slots is booked: proportional to the time each slot was active, or entirely onto the slot that ran longest."
+        }
+      },
+      "tools": {
+        "title": "Import, export, contribute",
+        "menu_options": {
+          "import_db": "Import filament database",
+          "export_db": "Export filament database",
+          "contribute": "Contribution snippet",
+          "link_slot_tag": "Link NFC tag to a slot",
+          "init": "Back"
+        }
+      },
+      "import_db": {
+        "title": "Import filament database",
+        "description": "Paste a JSON document with 'vendors' and 'types'.",
+        "data": {
+          "document": "JSON",
+          "overwrite": "Overwrite existing entries"
+        }
+      },
+      "export_db": {
+        "title": "Filament database",
+        "description": "```json\n{document}\n```"
+      },
+      "contribute": {
+        "title": "Contribution snippet",
+        "description": "Your own filament types, ready to be pasted into a pull request against the bundled database.\n\n```json\n{snippet}\n```"
+      },
+      "link_slot_tag": {
+        "title": "Link NFC tag to a slot",
+        "description": "For the two-sticker workflow: one sticker per roll, four at the AMS. Scan the roll, scan the slot, done — no screen involved.\n\nLinked: {linked}",
+        "data": {
+          "tag_id": "Tag ID",
+          "slot": "Slot"
+        }
+      }
+    },
+    "error": {
+      "no_types": "There is no filament type yet. Add one first.",
+      "no_spools": "There is no spool yet.",
+      "tag_required": "Enter an NFC tag ID or an RFID UID.",
+      "write_failed": "Could not write /config/filament_db.json. Check the log.",
+      "invalid_json": "That is not valid JSON.",
+      "import_failed": "The import failed. Check the log."
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "loaded": {
+        "name": "Loaded"
+      },
+      "low_stock": {
+        "name": "Low stock"
+      }
+    },
+    "button": {
+      "archive": {
+        "name": "Archive"
+      },
+      "duplicate": {
+        "name": "Duplicate"
+      }
+    },
+    "number": {
+      "gross_weight": {
+        "name": "Measured gross weight"
+      },
+      "low_stock_threshold": {
+        "name": "Low stock threshold"
+      },
+      "remaining_weight": {
+        "name": "Set remaining filament"
+      }
+    },
+    "sensor": {
+      "inventory_value": {
+        "name": "Inventory value"
+      },
+      "inventory_weight": {
+        "name": "Filament in stock"
+      },
+      "low_stock_count": {
+        "name": "Rolls running out"
+      },
+      "remaining_length": {
+        "name": "Remaining length"
+      },
+      "remaining_percent": {
+        "name": "Remaining"
+      },
+      "remaining_weight": {
+        "name": "Remaining filament"
+      },
+      "slot": {
+        "name": "Slot {slot}"
+      },
+      "spool_count": {
+        "name": "Spools in stock"
+      },
+      "total_consumed": {
+        "name": "Consumed in total"
+      }
+    }
+  },
+  "issues": {
+    "overdraw": {
+      "title": "Implausible consumption for {spool}",
+      "description": "A print reported {requested} g for {spool}, which is {overdraw} g more than the roll had left. The roll was set to 0 g instead of going negative.\n\nWeigh the roll and correct it with the measured gross weight, then this issue disappears."
+    }
+  },
+  "services": {
+    "add_spool": {
+      "name": "Add spool",
+      "description": "Adds one or more rolls of a known filament type.",
+      "fields": {
+        "type_id": {
+          "name": "Filament type",
+          "description": "Id of the type, for example bambulab_pla_basic."
+        },
+        "initial_weight": {
+          "name": "Starting weight",
+          "description": "Defaults to the type's nominal weight."
+        },
+        "remaining_weight": {
+          "name": "Remaining filament",
+          "description": "For a roll that is already opened."
+        },
+        "purchase_date": {
+          "name": "Purchase date",
+          "description": "When the roll was bought."
+        },
+        "price": {
+          "name": "Price",
+          "description": "Paid price, used for the inventory value."
+        },
+        "location": {
+          "name": "Location",
+          "description": "Where the roll is stored."
+        },
+        "note": {
+          "name": "Note",
+          "description": "Free text."
+        },
+        "low_stock_threshold": {
+          "name": "Low stock threshold",
+          "description": "Overrides the global threshold."
+        },
+        "count": {
+          "name": "Count",
+          "description": "How many identical rolls to add."
+        }
+      }
+    },
+    "update_spool": {
+      "name": "Update spool",
+      "description": "Changes the bookkeeping fields of a roll.",
+      "fields": {
+        "spool_id": {
+          "name": "Spool",
+          "description": "Id of the roll."
+        },
+        "type_id": {
+          "name": "Filament type",
+          "description": "Move the roll to another type."
+        },
+        "location": {
+          "name": "Location",
+          "description": "Where the roll is stored."
+        },
+        "price": {
+          "name": "Price",
+          "description": "Paid price."
+        },
+        "purchase_date": {
+          "name": "Purchase date",
+          "description": "When the roll was bought."
+        },
+        "note": {
+          "name": "Note",
+          "description": "Free text."
+        },
+        "low_stock_threshold": {
+          "name": "Low stock threshold",
+          "description": "Overrides the global threshold."
+        }
+      }
+    },
+    "duplicate_spool": {
+      "name": "Duplicate spool",
+      "description": "Adds another, full roll of the same type.",
+      "fields": {
+        "spool_id": {
+          "name": "Spool",
+          "description": "Id of the roll to copy."
+        }
+      }
+    },
+    "consume": {
+      "name": "Consume filament",
+      "description": "Subtracts filament from a roll, by weight or by length.",
+      "fields": {
+        "spool_id": {
+          "name": "Spool",
+          "description": "Id of the roll. Alternatively give a slot."
+        },
+        "slot": {
+          "name": "Slot",
+          "description": "Subtracts from whatever is loaded in this slot."
+        },
+        "amount": {
+          "name": "Weight",
+          "description": "Grams to subtract."
+        },
+        "length": {
+          "name": "Length",
+          "description": "Metres to subtract; converted using the type's density."
+        }
+      }
+    },
+    "assign_slot": {
+      "name": "Assign slot",
+      "description": "Records which roll is loaded in a slot.",
+      "fields": {
+        "slot": {
+          "name": "Slot",
+          "description": "AMS slot number."
+        },
+        "spool_id": {
+          "name": "Spool",
+          "description": "Id of the roll; omit to empty the slot."
+        }
+      }
+    },
+    "clear_slot": {
+      "name": "Clear slot",
+      "description": "Marks a slot as empty.",
+      "fields": {
+        "slot": {
+          "name": "Slot",
+          "description": "AMS slot number."
+        }
+      }
+    },
+    "archive_spool": {
+      "name": "Archive spool",
+      "description": "Removes the entities of a roll and keeps its data.",
+      "fields": {
+        "spool_id": {
+          "name": "Spool",
+          "description": "Id of the roll."
+        }
+      }
+    },
+    "restore_spool": {
+      "name": "Restore spool",
+      "description": "Brings an archived roll and its entities back.",
+      "fields": {
+        "spool_id": {
+          "name": "Spool",
+          "description": "Id of the roll."
+        }
+      }
+    },
+    "delete_spool": {
+      "name": "Delete spool",
+      "description": "Deletes a roll and its history for good.",
+      "fields": {
+        "spool_id": {
+          "name": "Spool",
+          "description": "Id of the roll."
+        }
+      }
+    },
+    "correct_weight": {
+      "name": "Correct weight",
+      "description": "Corrects a roll after weighing it.",
+      "fields": {
+        "spool_id": {
+          "name": "Spool",
+          "description": "Id of the roll."
+        },
+        "gross_weight": {
+          "name": "Gross weight",
+          "description": "Reading including the empty spool; the spool weight is subtracted."
+        },
+        "remaining_weight": {
+          "name": "Remaining filament",
+          "description": "Net filament, if you already did the subtraction."
+        }
+      }
+    },
+    "add_vendor": {
+      "name": "Add manufacturer",
+      "description": "Adds a manufacturer to /config/filament_db.json.",
+      "fields": {
+        "name": {
+          "name": "Name",
+          "description": "Name of the manufacturer."
+        },
+        "vendor_id": {
+          "name": "Id",
+          "description": "Derived from the name when omitted."
+        },
+        "website": {
+          "name": "Website",
+          "description": "Link to the manufacturer."
+        }
+      }
+    },
+    "add_type": {
+      "name": "Add filament type",
+      "description": "Adds a filament type to /config/filament_db.json.",
+      "fields": {
+        "vendor_id": {
+          "name": "Manufacturer",
+          "description": "Id of the manufacturer."
+        },
+        "name": {
+          "name": "Product name",
+          "description": "For example 'PLA Basic'."
+        },
+        "material": {
+          "name": "Material",
+          "description": "PLA, PETG, ASA, …"
+        },
+        "type_id": {
+          "name": "Id",
+          "description": "Derived from the name when omitted."
+        },
+        "color_name": {
+          "name": "Colour name",
+          "description": "For example 'Jade White'."
+        },
+        "color_hex": {
+          "name": "Colour",
+          "description": "Hex value, for example #1F6FEB."
+        },
+        "diameter": {
+          "name": "Diameter",
+          "description": "1.75 or 2.85 mm."
+        },
+        "density": {
+          "name": "Density",
+          "description": "g/cm³; defaults to the material's value."
+        },
+        "net_weight": {
+          "name": "Nominal weight",
+          "description": "Filament weight of a full roll."
+        },
+        "spool_weight": {
+          "name": "Empty spool weight",
+          "description": "Needed for the re-weigh correction."
+        },
+        "spool_type": {
+          "name": "Spool type",
+          "description": "plastic, cardboard, refill or unknown."
+        },
+        "nozzle_temp_min": {
+          "name": "Nozzle temperature, minimum",
+          "description": "Lower end of the recommended range."
+        },
+        "nozzle_temp_max": {
+          "name": "Nozzle temperature, maximum",
+          "description": "Upper end of the recommended range."
+        },
+        "bed_temp": {
+          "name": "Bed temperature",
+          "description": "Recommended bed temperature."
+        },
+        "gtin": {
+          "name": "Barcodes",
+          "description": "List of EAN/UPC codes for this product."
+        }
+      }
+    },
+    "link_tag": {
+      "name": "Link tag",
+      "description": "Links an NFC tag to a roll or to an AMS slot.",
+      "fields": {
+        "tag_id": {
+          "name": "Tag",
+          "description": "Tag ID from Settings → Tags."
+        },
+        "spool_id": {
+          "name": "Spool",
+          "description": "Id of the roll the sticker sits on."
+        },
+        "slot": {
+          "name": "Slot",
+          "description": "Slot the sticker identifies."
+        }
+      }
+    },
+    "unlink_tag": {
+      "name": "Unlink tag",
+      "description": "Removes a tag mapping so the sticker can be reused.",
+      "fields": {
+        "tag_id": {
+          "name": "Tag",
+          "description": "Tag ID."
+        }
+      }
+    },
+    "learn_rfid": {
+      "name": "Learn RFID tag",
+      "description": "Teaches a Bambu RFID UID to a roll. Bambu spools carry one tag per side — run this once per side.",
+      "fields": {
+        "spool_id": {
+          "name": "Spool",
+          "description": "Id of the roll."
+        },
+        "rfid_uid": {
+          "name": "RFID UID",
+          "description": "UID reported by the AMS."
+        },
+        "slot": {
+          "name": "Slot",
+          "description": "Assign the roll to this slot straight away."
+        }
+      }
+    },
+    "import_db": {
+      "name": "Import filament database",
+      "description": "Merges a filament database into your own.",
+      "fields": {
+        "filename": {
+          "name": "File",
+          "description": "Path inside the config directory or an allowed directory."
+        },
+        "data": {
+          "name": "Data",
+          "description": "The document itself, instead of a file."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Replace entries that already exist."
+        }
+      }
+    },
+    "export_db": {
+      "name": "Export filament database",
+      "description": "Returns the filament database and optionally writes it to a file.",
+      "fields": {
+        "filename": {
+          "name": "File",
+          "description": "Where to write the export."
+        },
+        "only_user": {
+          "name": "Own entries only",
+          "description": "Export only your own types, not the bundled ones."
+        }
+      }
+    },
+    "export_contribution": {
+      "name": "Contribution snippet",
+      "description": "Returns your own filament types as a pull request ready snippet.",
+      "fields": {
+        "filename": {
+          "name": "File",
+          "description": "Where to write the snippet."
+        }
+      }
+    },
+    "reload_db": {
+      "name": "Reload filament database",
+      "description": "Re-reads the bundled and the user filament database from disk."
+    }
+  }
+}

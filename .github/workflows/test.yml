@@ -1,0 +1,53 @@
+name: Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: pytest and ruff
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements_test.txt
+
+      - name: Install the matching frontend package
+        # The integration serves its Lovelace card, so setting it up in a test
+        # pulls in the frontend component, which needs hass_frontend present.
+        run: |
+          python - <<'PY'
+          import json
+          import pathlib
+          import subprocess
+
+          import homeassistant
+
+          manifest = (
+              pathlib.Path(homeassistant.__file__).parent
+              / "components"
+              / "frontend"
+              / "manifest.json"
+          )
+          requirement = json.loads(manifest.read_text())["requirements"][0]
+          subprocess.check_call(["pip", "install", requirement])
+          PY
+
+      - name: Ruff
+        run: |
+          ruff check .
+          ruff format --check .
+
+      - name: Pytest
+        run: pytest --cov=custom_components.filament_manager --cov-report=term-missing

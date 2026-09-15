@@ -1,0 +1,14 @@
+{
+  "domain": "filament_manager",
+  "name": "Filament Manager",
+  "codeowners": ["@niclasreutter"],
+  "config_flow": true,
+  "dependencies": ["http", "frontend", "persistent_notification", "tag", "websocket_api"],
+  "documentation": "https://github.com/niclasreutter/FilamentMaster",
+  "integration_type": "service",
+  "iot_class": "local_push",
+  "issue_tracker": "https://github.com/niclasreutter/FilamentMaster/issues",
+  "requirements": [],
+  "single_config_entry": true,
+  "version": "1.0.0"
+}
