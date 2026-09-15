@@ -50,6 +50,7 @@ from .const import (
     CONF_NOTIFY_SERVICE,
     CONF_PRINT_STATE_ENTITY,
     CONF_PRINT_WEIGHT_ENTITY,
+    CONF_SHOPPING_LIST_ENTITY,
     CONF_SLOT_COUNT,
     CONF_SPLIT_STRATEGY,
     CONF_TRAY_ENTITIES,
@@ -743,10 +744,11 @@ class FilamentManagerOptionsFlow(OptionsFlow):
                     CONF_SPLIT_STRATEGY: user_input[CONF_SPLIT_STRATEGY],
                 }
             )
-            if notify_service := user_input.get(CONF_NOTIFY_SERVICE):
-                options[CONF_NOTIFY_SERVICE] = notify_service
-            else:
-                options.pop(CONF_NOTIFY_SERVICE, None)
+            for key in (CONF_NOTIFY_SERVICE, CONF_SHOPPING_LIST_ENTITY):
+                if value := user_input.get(key):
+                    options[key] = value
+                else:
+                    options.pop(key, None)
             return self.async_create_entry(title="", data=options)
 
         notify_services = [
@@ -783,6 +785,12 @@ class FilamentManagerOptionsFlow(OptionsFlow):
                             "suggested_value": options.get(CONF_NOTIFY_SERVICE)
                         },
                     ): _select(notify_services, custom_value=True),
+                    vol.Optional(
+                        CONF_SHOPPING_LIST_ENTITY,
+                        description={
+                            "suggested_value": options.get(CONF_SHOPPING_LIST_ENTITY)
+                        },
+                    ): EntitySelector(EntitySelectorConfig(domain="todo")),
                     vol.Required(
                         CONF_AUTO_ASSIGN_RFID,
                         default=options.get(CONF_AUTO_ASSIGN_RFID, True),

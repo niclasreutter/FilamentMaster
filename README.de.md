@@ -27,6 +27,7 @@ Assistant. Ohne Zusatzserver, ohne Add-on, ohne Container — alles liegt in
   eintragen, das Leergewicht der Spule wird abgezogen.
 - **Eine Dashboard-Karte** mit Barcode-Scan, der auch auf iOS läuft, direkt in
   der Integration — kein zweites HACS-Repository, keine Dashboard-Ressource.
+- **Ein Einkaufslisten-Eintrag**, sobald die letzte Rolle eines Typs zur Neige geht.
 - **Deutsch und Englisch** durchgängig.
 
 ### Bewusst außen vor
@@ -284,6 +285,14 @@ gehen.
 >       - sensor.*_verbraucht_gesamt
 >       - sensor.*_restlange
 > ```
+
+### Einkaufsliste
+
+Unter *Konfigurieren → Einstellungen → Einkaufsliste* eine To-do-Liste
+auswählen, und ein Filamenttyp landet darauf, sobald **jede** Rolle dieses
+Typs unter ihrer Schwelle liegt — eine volle Reserve im Regal hält ihn von
+der Liste fern. Der Typ wird gemerkt, also einmal eingetragen statt bei jedem
+Neustart, und ein Nachkauf macht ihn wieder eintragsfähig.
 
 ---
 

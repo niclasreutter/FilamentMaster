@@ -46,6 +46,7 @@ if TYPE_CHECKING:
     from .consumption import ConsumptionTracker
     from .notifications import Notifier
     from .resolver import SpoolResolver
+    from .shopping import ShoppingList
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -74,6 +75,7 @@ class FilamentCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         self.resolver: SpoolResolver | None = None
         self.tracker: ConsumptionTracker | None = None
         self.notifier: Notifier | None = None
+        self.shopping: ShoppingList | None = None
         self._known_spools: set[str] = set()
 
     # -- lifecycle ---------------------------------------------------------

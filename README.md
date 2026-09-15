@@ -26,6 +26,7 @@ Home Assistant. No extra server, no add-on, no container — everything lives in
   gross weight, and the empty spool weight is subtracted for you.
 - **A dashboard card** with barcode scanning that works on iOS too, bundled
   with the integration — no second HACS repository, no dashboard resource.
+- **A shopping list** entry when the last roll of a type runs low.
 - **German and English** throughout.
 
 ### Deliberately out of scope
@@ -281,6 +282,14 @@ value in your currency, the number of rolls, and how many are running out.
 >       - sensor.*_consumed_in_total
 >       - sensor.*_remaining_length
 > ```
+
+### Shopping list
+
+Point *Configure → Settings → Shopping list* at a to-do list and a filament
+type is added to it as soon as **every** roll of that type is below its
+threshold — a full spare on the shelf keeps it off the list. The type is
+remembered, so it is added once rather than on every restart, and buying a
+new roll makes it eligible again.
 
 ---
 

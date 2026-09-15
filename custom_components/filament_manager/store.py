@@ -73,6 +73,7 @@ class SpoolStore:
         self.slots: dict[int, SlotState] = {}
         self.tags: dict[str, dict[str, Any]] = {}
         self.recent_types: list[str] = []
+        self.shopping_listed: list[str] = []
         self._listeners: list[Callable[[], None]] = []
 
     # -- lifecycle ---------------------------------------------------------
@@ -95,6 +96,7 @@ class SpoolStore:
             for tag_id, payload in (data.get("tags") or {}).items()
         }
         self.recent_types = list(data.get("recent_types") or [])
+        self.shopping_listed = list(data.get("shopping_listed") or [])
         _LOGGER.debug(
             "Loaded %s spools, %s slot assignments, %s tags",
             len(self.spools),
@@ -127,6 +129,7 @@ class SpoolStore:
             "slots": [slot.to_dict() for slot in self.slots.values()],
             "tags": self.tags,
             "recent_types": self.recent_types,
+            "shopping_listed": self.shopping_listed,
         }
 
     async def async_save(self) -> None:
@@ -396,6 +399,22 @@ class SpoolStore:
             self.recent_types.remove(type_id)
         self.recent_types.insert(0, type_id)
         del self.recent_types[RECENT_TYPES_LIMIT:]
+
+    @callback
+    def set_shopping_listed(self, type_id: str, listed: bool) -> None:
+        """Remember whether a type is already on the shopping list.
+
+        Written without notifying listeners: this is bookkeeping about the
+        inventory, not a change to it, and re-entering the listener that set
+        it would loop.
+        """
+        if listed and type_id not in self.shopping_listed:
+            self.shopping_listed.append(type_id)
+        elif not listed and type_id in self.shopping_listed:
+            self.shopping_listed.remove(type_id)
+        else:
+            return
+        self._store.async_delay_save(self._as_dict, SAVE_DELAY)
 
     @callback
     def spools_of_type(self, type_id: str) -> Iterable[Spool]:

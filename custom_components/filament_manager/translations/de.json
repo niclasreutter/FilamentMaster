@@ -187,12 +187,14 @@
           "auto_assign_rfid": "Automatisch per RFID zuordnen",
           "auto_assign_heuristic": "Automatisch per Material und Farbe zuordnen",
           "auto_consume": "Filament am Druckende abziehen",
-          "split_strategy": "Aufteilung über mehrere Slots"
+          "split_strategy": "Aufteilung über mehrere Slots",
+          "shopping_list_entity": "Einkaufsliste"
         },
         "data_description": {
           "color_tolerance": "Abstand im CIE-Lab-Raum, der noch als dieselbe Farbe gilt. Rund 25 ist ein guter Start, kleiner ist strenger.",
           "notify_service": "Für Actionable Notifications, zum Beispiel notify.mobile_app_pixel.",
-          "split_strategy": "Wie ein Auftrag über mehrere Slots verbucht wird: anteilig nach aktiver Zeit oder komplett auf den längsten Slot."
+          "split_strategy": "Wie ein Auftrag über mehrere Slots verbucht wird: anteilig nach aktiver Zeit oder komplett auf den längsten Slot.",
+          "shopping_list_entity": "Eine To-do-Liste, auf die Filament wandert, sobald jede Rolle eines Typs zur Neige geht."
         }
       },
       "tools": {

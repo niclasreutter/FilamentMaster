@@ -17,6 +17,7 @@ from .frontend import async_register_frontend
 from .notifications import Notifier
 from .resolver import SpoolResolver
 from .services import async_register_services, async_unregister_services
+from .shopping import ShoppingList
 from .store import SpoolStore
 from .websocket import async_register_websocket_api
 
@@ -44,6 +45,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: FilamentConfigEntry) -> 
     coordinator.tracker = ConsumptionTracker(hass, coordinator)
     coordinator.tracker.async_setup()
     entry.async_on_unload(coordinator.tracker.async_shutdown)
+
+    coordinator.shopping = ShoppingList(hass, coordinator)
+    coordinator.shopping.async_setup()
+    entry.async_on_unload(coordinator.shopping.async_shutdown)
 
     async_register_services(hass)
     async_register_websocket_api(hass)

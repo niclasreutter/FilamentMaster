@@ -187,12 +187,14 @@
           "auto_assign_rfid": "Assign automatically by RFID",
           "auto_assign_heuristic": "Assign automatically by material and colour",
           "auto_consume": "Subtract filament when a print finishes",
-          "split_strategy": "Split across slots"
+          "split_strategy": "Split across slots",
+          "shopping_list_entity": "Shopping list"
         },
         "data_description": {
           "color_tolerance": "Distance in CIE Lab that still counts as the same colour. Around 25 is a good start; lower is stricter.",
           "notify_service": "For actionable notifications, for example notify.mobile_app_pixel.",
-          "split_strategy": "How a job that used several slots is booked: proportional to the time each slot was active, or entirely onto the slot that ran longest."
+          "split_strategy": "How a job that used several slots is booked: proportional to the time each slot was active, or entirely onto the slot that ran longest.",
+          "shopping_list_entity": "A to-do list to add filament to once every roll of a type is running low."
         }
       },
       "tools": {
