@@ -8,7 +8,6 @@ Three levels, as in any catalogue: a ``Vendor`` sells a ``FilamentType``
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field, fields
-from datetime import datetime
 import math
 from typing import Any, Self
 from uuid import uuid4
@@ -223,10 +222,3 @@ class SlotState:
 def utcnow_iso() -> str:
     """Return the current UTC time as an ISO string."""
     return dt_util.utcnow().isoformat()
-
-
-def parse_iso(value: str | None) -> datetime | None:
-    """Parse an ISO timestamp, returning ``None`` for junk."""
-    if not value:
-        return None
-    return dt_util.parse_datetime(value)

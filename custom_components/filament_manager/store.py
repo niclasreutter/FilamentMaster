@@ -396,11 +396,6 @@ class SpoolStore:
         del self.recent_types[RECENT_TYPES_LIMIT:]
 
     @callback
-    def types_in_use(self) -> set[str]:
-        """Return every type id referenced by a spool."""
-        return {spool.type_id for spool in self.spools.values()}
-
-    @callback
     def spools_of_type(self, type_id: str) -> Iterable[Spool]:
         """Return every spool of a given type."""
         return [spool for spool in self.spools.values() if spool.type_id == type_id]

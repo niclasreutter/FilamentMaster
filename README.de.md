@@ -385,9 +385,13 @@ logger:
 - [x] README mit Installation und Recorder-Hinweis
 - [x] Übersetzungen `de` und `en`
 - [x] hassfest- und HACS-Validierung in der CI
+- [x] Brand-Assets unter `custom_components/filament_manager/brand/`
+- [ ] **Repo-Description und Topics** — ohne sie schlägt die HACS-Validierung
+      fehl, und sie lassen sich nur in der GitHub-Oberfläche setzen
+      (Repository → About → Zahnrad). Vorschlag für Topics: `home-assistant`,
+      `hacs`, `custom-component`, `3d-printing`, `filament`, `bambulab`, `ams`
 - [ ] GitHub-Release mit Tag
-- [ ] Repo-Description und Topics gesetzt
-- [ ] PR an [`home-assistant/brands`](https://github.com/home-assistant/brands) für das Icon
+- [ ] PR an [`home-assistant/brands`](https://github.com/home-assistant/brands) für das Icon, das danach die mitgelieferten Assets ablöst
 - [ ] Aufnahme in den HACS-Default-Store beantragen
 
 ---

@@ -136,11 +136,6 @@ class FilamentDatabase:
         return self.types.get(type_id)
 
     @callback
-    def get_vendor(self, vendor_id: str) -> Vendor | None:
-        """Return one vendor."""
-        return self.vendors.get(vendor_id)
-
-    @callback
     def vendor_name(self, type_id: str) -> str:
         """Return the vendor name for a type, or an empty string."""
         filament_type = self.types.get(type_id)
@@ -224,21 +219,6 @@ class FilamentDatabase:
         payload.pop("source", None)
         await self._async_upsert("types", payload)
         return filament_type
-
-    async def async_remove_type(self, type_id: str) -> bool:
-        """Remove a user defined type.
-
-        Bundled types cannot be deleted — they come back with the next HACS
-        update — so this only touches the user layer.
-        """
-        entries: list[dict[str, Any]] = self._user_data.get("types", [])
-        remaining = [entry for entry in entries if entry.get("id") != type_id]
-        if len(remaining) == len(entries):
-            return False
-        self._user_data["types"] = remaining
-        await self._async_write_user()
-        await self.async_reload()
-        return True
 
     async def _async_upsert(self, section: str, payload: dict[str, Any]) -> None:
         """Insert or replace one entry in the user database."""

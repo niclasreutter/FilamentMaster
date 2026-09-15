@@ -381,9 +381,13 @@ logger:
 - [x] README with installation and the recorder hint
 - [x] German and English translations
 - [x] hassfest and HACS validation in CI
+- [x] Brand assets under `custom_components/filament_manager/brand/`
+- [ ] **Repository description and topics** — HACS validation fails without
+      them, and they can only be set in the GitHub UI (repository → About →
+      the gear icon). Suggested topics: `home-assistant`, `hacs`,
+      `custom-component`, `3d-printing`, `filament`, `bambulab`, `ams`
 - [ ] GitHub release with a tag
-- [ ] Repository description and topics set
-- [ ] Pull request against [`home-assistant/brands`](https://github.com/home-assistant/brands) for the icon
+- [ ] Pull request against [`home-assistant/brands`](https://github.com/home-assistant/brands) for the icon, which then replaces the bundled assets
 - [ ] Apply for inclusion in the HACS default store
 
 ---

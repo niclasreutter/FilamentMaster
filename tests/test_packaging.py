@@ -6,6 +6,7 @@ import ast
 import json
 from pathlib import Path
 
+from PIL import Image
 import pytest
 import yaml
 
@@ -133,3 +134,19 @@ def test_the_wasm_reader_is_bundled() -> None:
     assert (COMPONENT / "www/zxing-reader.js").is_file()
     assert (COMPONENT / "www/zxing_reader.wasm").stat().st_size > 100_000
     assert (COMPONENT / "www/ZXING-WASM-LICENSE").is_file()
+
+
+def test_brand_assets_ship_with_the_integration() -> None:
+    """HACS needs these until the domain is listed in home-assistant/brands."""
+    expected = {
+        "icon.png": (256, 256),
+        "icon@2x.png": (512, 512),
+        "logo.png": (256, 256),
+        "logo@2x.png": (512, 512),
+    }
+    for name, size in expected.items():
+        path = COMPONENT / "brand" / name
+        assert path.is_file(), name
+        with Image.open(path) as image:
+            assert image.size == size, name
+            assert image.mode == "RGBA", name
